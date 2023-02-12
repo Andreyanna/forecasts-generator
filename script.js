@@ -1,15 +1,53 @@
-/* Генерация предсказания должна происходить при клике на кнопку «предсказать судьбу» */
+const forecastButton = document.querySelector('.forecast-btn');
+const currentForecastTitle = document.querySelector('.current-forecast > h1');
+const currentForecastChance = document.querySelector('.current-forecast > p');
 
-/* Заранее заготовь 3-5 предсказаний и в зависимости от того, как лягут карты судьбы (или что скажет Math.random) показывай их пользователю */
+const container = document.querySelector('.container');
 
-/* Подставляй текст нового предсказания в .current-forecast h1 */
+const chanceText = 'Вероятность:';
+const chancePercent = '%';
+/* const forecastsContainer = document.querySelector('.forecasts'); никак не влияет вроде */
 
-/* Показывай процент вероятности, с которым предсказание сбудется — в верстке это .current-forecast p */
+function getRandomRange(min, max) {
+    return Math.round(Math.random() * (max - min)) + min;
+};
 
-/* Данный процент также нужно генерировать автоматически, он может принимать значения от 0 до 100% */
 
-/* Совет: заведи функцию-хелпер, которая будет заниматься только генерацией данных в диапазоне от min до max и используй ее где нужно */
+forecastButton.addEventListener('click', function() {
+    const forecastNumber = getRandomRange(1, 6);
+    let forecastText = '';
+    if (forecastNumber == 1) {
+        forecastText = 'Сегодня у тебя всё получится!'
+    } else if (forecastNumber == 2) {
+        forecastText = 'Тебя ждет внезапное свидание!'
+    } else if (forecastNumber == 3) {
+        forecastText = 'Звонок от мамы! Приготовь все последние новости!'
+    } else if (forecastNumber == 4) {
+        forecastText = 'Впереди большие успехи в изучении JS!'
+    } else if (forecastNumber == 5) {
+        forecastText = 'Цветы от тайного поклонника!'
+    } else if (forecastNumber == 6) {
+        forecastText = 'Сегодняшний ужин будет ооочень вкусным!'
+    }
+    currentForecastTitle.textContent = forecastText;
+    const chanceNum = getRandomRange(0, 100);
+    currentForecastChance.textContent = `${chanceText} ${chanceNum}` + chancePercent;
 
-/* При генерации нового предсказания старое предсказание должно добавляться в начало списка «Мои предсказания» — .forecasts  */
+    if (currentForecastTitle.textContent !== '') /* я думала это сработает от дублирования предсказания в список по порвому же клику. но нет - никак это if не влияет */ {
+        const forecastTemplate = document.querySelector('#forecast-item');
 
-/* Для добавления предсказания в список воспользуйся шаблоном forecast-item */
+        function addForecastByTemplate(text, chance) {
+            const myForecast = forecastTemplate.content.cloneNode(true);
+            myForecast.querySelector('h3').textContent = text;
+            myForecast.querySelector('p').textContent = chance;
+            return myForecast;
+        };
+        const previousForecast = addForecastByTemplate(currentForecastTitle.textContent, currentForecastChance.textContent);
+        container.append(previousForecast);
+    };
+
+});
+
+/* ну и мешанина! подозреваю, что currentForecastTitle.textContent - это длинно, и нужно было облачить в дополнительную переменную? */
+
+/* и не получилось избавиться от дублирования главного предсказания в список внизу. Дублируется сразу с первого же нажатия, а не со второго. Не сообразила, как исправить... */
